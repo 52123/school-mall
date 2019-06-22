@@ -11,7 +11,7 @@ import java.time.ZoneId;
  * @since 2019/6/16 2:39
  */
 @Slf4j
-public class Snowflake {
+public class SnowFlake {
 
     /**
      * 工作机器ID
@@ -76,7 +76,7 @@ public class Snowflake {
 
     private long lastTimestamp = -1L;
 
-    public Snowflake(long workerId, long dataCenterId, long sequence){
+    public SnowFlake(long workerId, long dataCenterId){
 
         // 合法性检验
         if (workerId > maxWorkerId || workerId < 0) {
@@ -90,7 +90,6 @@ public class Snowflake {
 
         this.workerId = workerId;
         this.dataCenterId = dataCenterId;
-        this.sequence = sequence;
     }
 
     /**
@@ -98,7 +97,7 @@ public class Snowflake {
      *  逻辑：1.先判断当前时间是否大于上次生成时间
      *       2.若同一毫秒内有多个线程一起生成，则增加序列号
      *       3.将得到的所有数据移位到指定位
-     * @return
+     * @return 全局唯一ID
      */
     public synchronized long nextId() {
 

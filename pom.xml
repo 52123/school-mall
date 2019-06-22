@@ -18,6 +18,7 @@
         <module>school-mall-order</module>
         <module>school-mall-redis</module>
         <module>school-mall-seckill</module>
+        <module>school-mall-rpc</module>
     </modules>
 
     <properties>
