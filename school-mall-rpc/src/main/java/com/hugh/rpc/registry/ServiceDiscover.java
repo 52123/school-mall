@@ -38,8 +38,10 @@ public class ServiceDiscover {
         }
         /*
          * 若服务有多个地址，实现负载均衡
+         * 假如listSize等于1时，减一之后进行异或永远为另一个数(atomicInteger)
+         * 所以要加个判断处理
          */
-        return list.get(atomicInteger.getAndAdd(1) ^ (listSize - 1));
+        return list.get(listSize == 1 ? 0 : atomicInteger.getAndAdd(1) ^ (listSize - 1));
 
     }
 }
