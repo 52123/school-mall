@@ -24,13 +24,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     private HashMap<String, Object> serviceMap;
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, RpcRequest request) {
         threadPoolExecutor.execute(() -> {
             RpcResponse response = handleRequest(request);
             ctx.writeAndFlush(response);
         });
     }
-
 
 
     public NettyServerHandler(HashMap<String, Object> map) {
@@ -66,5 +65,14 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         ctx.channel().close();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+        log.error("服务连接发生异常", cause);
+        if (ctx.channel().isActive()) {
+            ctx.close();
+        }
     }
 }

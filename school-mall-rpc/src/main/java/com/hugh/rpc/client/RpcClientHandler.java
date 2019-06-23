@@ -17,7 +17,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     private ConcurrentHashMap<Integer, RpcFuture> pendingRPC = RpcFuturePool.getInstance();
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RpcResponse response) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcResponse response) {
         Integer requestId = response.getRequestId();
         RpcFuture rpcFuture = pendingRPC.get(requestId);
         if (rpcFuture != null) {
@@ -29,7 +29,9 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         super.exceptionCaught(ctx, cause);
-        log.error("RPC client error",cause);
-        ctx.close();
+        log.error("RPC client error", cause);
+        if (ctx.channel().isActive()) {
+            ctx.close();
+        }
     }
 }
