@@ -1,10 +1,10 @@
 # example
-zookeeper:
-  sessionTimeout: 5000
-  maxRetries: 3
-  baseSleepTimeMS: 1000
-  zooKeeperServer: 127.0.0.1:2181
-  rootPath: "/service"
-  serviceAddress: 127.0.0.1
-  servicePort: 8080
-  serviceName: "testRPC"
+#zookeeper:
+#  sessionTimeout: 5000
+#  maxRetries: 3
+#  baseSleepTimeMS: 1000
+#  zooKeeperServer: 127.0.0.1:2181
+#  rootPath: "/service"
+#  serviceAddress: 127.0.0.1
+#  servicePort: 8080
+#  serviceName: "testRPC"
