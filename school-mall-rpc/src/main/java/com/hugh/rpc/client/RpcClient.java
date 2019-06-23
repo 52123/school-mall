@@ -1,6 +1,6 @@
 package com.hugh.rpc.client;
 
-import com.hugh.common.utils.IpUtil;
+import com.hugh.rpc.utils.IpUtil;
 import com.hugh.rpc.protocol.RpcDecoder;
 import com.hugh.rpc.protocol.RpcEncoder;
 import com.hugh.rpc.protocol.RpcRequest;

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Proxy;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

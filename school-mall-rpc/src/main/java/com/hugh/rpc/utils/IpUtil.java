@@ -1,4 +1,4 @@
-package com.hugh.common.utils;
+package com.hugh.rpc.utils;
 
 /**
  * @author 52123

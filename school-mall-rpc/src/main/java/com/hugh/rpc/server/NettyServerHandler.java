@@ -1,6 +1,6 @@
 package com.hugh.rpc.server;
 
-import com.hugh.common.threadpool.ThreadPoolFactory;
+import com.hugh.rpc.utils.ThreadPoolFactory;
 import com.hugh.rpc.protocol.RpcRequest;
 import com.hugh.rpc.protocol.RpcResponse;
 import io.netty.channel.ChannelHandlerContext;

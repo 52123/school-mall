@@ -1,6 +1,6 @@
 package com.hugh.rpc;
 
-import com.hugh.common.threadpool.ThreadPoolFactory;
+import com.hugh.rpc.utils.ThreadPoolFactory;
 import com.hugh.rpc.client.HelloService;
 import com.hugh.rpc.client.RpcProxy;
 import com.hugh.rpc.registry.ServiceDiscover;
