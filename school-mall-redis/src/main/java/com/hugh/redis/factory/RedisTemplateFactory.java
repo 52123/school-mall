@@ -1,4 +1,4 @@
-package com.hugh.redis.redis;
+package com.hugh.redis.factory;
 
 
 
