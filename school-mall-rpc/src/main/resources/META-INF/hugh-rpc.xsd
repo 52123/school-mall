@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns="https://github.com/52123/schema/ch"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="https://github.com/52123/schema/ch"
+            elementFormDefault="qualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans" />
+
+    <!-- xml注入方式实现及bean解析注入参考
+     https://gitee.com/a1234567891/koalas-rpc/ -->
+    <xsd:element name="client">
+        <xsd:complexType> <!-- 定义一个复合类型 -->
+            <xsd:complexContent> <!-- 对复合类型的扩展或限制 -->
+                <xsd:extension base="beans:identifiedType"> <!-- 继承定义 -->
+                    <xsd:attribute name="serviceName" type="xsd:string" use="required"/>
+                    <xsd:attribute name="zooKeeperAddress" type="xsd:string" use="required"/>
+                    <xsd:attribute name="rootPath" type="xsd:string" default="/service"/>
+                    <xsd:attribute name="serviceInterface" type="xsd:string" use="required"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="server">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:attribute name="serviceName" type="xsd:string" use="required"/>
+                    <xsd:attribute name="serviceAddress" type="xsd:string" use="required"/>
+                    <xsd:attribute name="servicePort" type="xsd:int" use="required"/>
+                    <xsd:attribute name="rootPath" type="xsd:string" default="/service"/>
+                    <xsd:attribute name="zooKeeperAddress" type="xsd:string" use="required"/>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

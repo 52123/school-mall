@@ -12,9 +12,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +25,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 由bean的形式注入到业务中
  */
 @Slf4j
-public class NettyServer implements ApplicationContextAware, InitializingBean {
+public class NettyServer{
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup();
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -50,8 +48,7 @@ public class NettyServer implements ApplicationContextAware, InitializingBean {
         this.serviceAddress = serviceRegistry.getServiceAddress();
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void initService(ApplicationContext applicationContext) throws BeansException {
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(RpcService.class);
         for (Object serviceBean : serviceBeanMap.values()) {
             Class[] classes = serviceBean.getClass().getInterfaces();
@@ -62,8 +59,7 @@ public class NettyServer implements ApplicationContextAware, InitializingBean {
         }
     }
 
-    @Override
-    public void afterPropertiesSet() {
+    public void startUpService() {
         threadPool.execute(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup).
