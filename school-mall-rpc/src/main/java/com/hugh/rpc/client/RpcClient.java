@@ -28,7 +28,7 @@ public class RpcClient {
 
     private Channel channel;
 
-    private ConcurrentHashMap<Integer, RpcFuture> futureResponsePool = RpcFuturePool.getInstance();
+    private static ConcurrentHashMap<Integer, RpcFuture> futureResponsePool = RpcFuturePool.getInstance();
 
 
     public RpcClient init(String serviceAddress, int servicePort) throws Exception {
