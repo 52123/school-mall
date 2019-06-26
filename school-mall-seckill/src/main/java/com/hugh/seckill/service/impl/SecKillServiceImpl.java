@@ -58,7 +58,6 @@ public class SecKillServiceImpl implements SecKillService {
             }
             if (checkSecKillCount(req.secondKillId) > 0) {
                 orderId = orderService.createOrderId(req);
-                System.out.println(orderId);
                 MallOrder mallOrder = new MallOrder();
                 mallOrder.setId(orderId);
                 mallOrder.setUserId(req.userId);
