@@ -57,4 +57,9 @@ public class RedisServiceImpl implements RedisService {
     public boolean hasKey(String key) {
         return redisTemplate.hasKey(key);
     }
+
+    @Override
+    public Object existKey(String key) {
+        return hasKey(key) ? getValue(key) : null;
+    }
 }

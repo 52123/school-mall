@@ -55,4 +55,12 @@ public interface RedisService {
      */
     boolean hasKey(String key);
 
+    /**
+     * 判断缓存中是否有此键
+     * 有则返回值
+     * 无则返回null
+     * @param key 键
+     * @return  值
+     */
+    Object existKey(String key);
 }
