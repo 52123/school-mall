@@ -36,24 +36,23 @@ public class SecKillServiceImpl implements SecKillService {
     private RedisLockUtil redisLock;
 
     @Autowired
-    public SecKillServiceImpl(RedisService redisService){
+    public SecKillServiceImpl(RedisService redisService) {
         this.redisService = redisService;
-        this.redisLock = new RedisLockUtil("redisLock",redisService);
+        this.redisLock = new RedisLockUtil("redisLock", redisService);
     }
 
     /**
      * 使用Redis分布式锁生成全局唯一订单ID
+     *
      * @param req 秒杀dto
      */
     @Override
     public BaseResp startRedisSecondKill(SecKillReq req) {
         // 短时间(30秒)内同一用户对同一商品发起多次请求
-        if(redisLock.lock()) {
-            System.out.println(Thread.currentThread().getName() + "  getLock");
+        if (redisLock.lock()) {
             String redisKey = req.userId + ":" + req.secondKillId;
             Long orderId = orderService.checkRepeat(redisKey);
             if (orderId != null) {
-                System.out.println(Thread.currentThread().getName() + "  releaseLock");
                 redisLock.releaseLock();
                 return BaseResp.fail("0002", "请勿重复下单");
             }
@@ -66,29 +65,27 @@ public class SecKillServiceImpl implements SecKillService {
                 mallOrder.setCreateTime(new Date(System.currentTimeMillis()));
                 orderMapper.insert(mallOrder);
                 reduceCount(req.secondKillId);
-                System.out.println(Thread.currentThread().getName() + "  releaseLock");
                 redisLock.releaseLock();
                 return BaseResp.success("抢购成功");
             } else {
-                System.out.println(Thread.currentThread().getName() + "  releaseLock");
                 redisLock.releaseLock();
                 return BaseResp.success("秒杀已结束");
             }
-        }else{
-            return BaseResp.fail("0002","换个姿势试试再吧");
+        } else {
+            return BaseResp.fail("0002", "换个姿势试试再吧");
         }
     }
 
     private int checkSecKillCount(Long secondKillId) {
         Integer count = (Integer) redisService.existKey("secKill:" + secondKillId);
-        if(count == null){
+        if (count == null) {
             count = secKillMapper.selectSecKillCount(secondKillId);
             redisService.setValue("secKill:" + secondKillId, count);
         }
         return count;
     }
 
-    private void reduceCount(Long secKillId){
+    private void reduceCount(Long secKillId) {
         redisService.decrement("secKill:" + secKillId);
     }
 }

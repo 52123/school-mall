@@ -40,7 +40,6 @@ public class RedisLockUtil {
             return false;
         }
         boolean isLock = redisService.setIfAbsent(lockKey, "1", expireTime, timeUnit);
-        System.out.println(Thread.currentThread().getName() + " " + isLock);
         if (isLock) {
             return true;
         } else {
