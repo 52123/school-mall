@@ -40,7 +40,12 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public boolean setIfAbsent(String key, Object value, long timeout, TimeUnit timeUnit) {
-        return opsValue.setIfAbsent(key, value, timeout, timeUnit);
+        Boolean flag = opsValue.setIfAbsent(key, value, timeout, timeUnit);
+        if(flag == null){
+            return false;
+        }else{
+            return flag;
+        }
     }
 
     @Override
@@ -50,16 +55,31 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public boolean delete(String key) {
-        return redisTemplate.delete(key);
+        Boolean flag = redisTemplate.delete(key);
+        if(flag == null){
+            return false;
+        }else{
+            return flag;
+        }
     }
 
     @Override
     public boolean hasKey(String key) {
-        return redisTemplate.hasKey(key);
+        Boolean flag = redisTemplate.hasKey(key);
+        if(flag == null){
+            return false;
+        }else{
+            return flag;
+        }
     }
 
     @Override
     public Object existKey(String key) {
         return hasKey(key) ? getValue(key) : null;
+    }
+
+    @Override
+    public Long decrement(String key) {
+        return opsValue.decrement(key);
     }
 }

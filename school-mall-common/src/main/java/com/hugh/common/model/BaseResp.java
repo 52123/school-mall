@@ -21,6 +21,12 @@ public class BaseResp<T> implements Serializable {
         return baseResp;
     }
 
+    public static<T> BaseResp success(String message){
+        BaseResp<T> baseResp = new BaseResp<>();
+        baseResp.setMessage(message);
+        return baseResp;
+    }
+
     public static <T> BaseResp success(){
         return new BaseResp<T>();
     }

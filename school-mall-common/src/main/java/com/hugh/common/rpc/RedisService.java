@@ -63,4 +63,11 @@ public interface RedisService {
      * @return  值
      */
     Object existKey(String key);
+
+    /**
+     * 自减
+     * @param key 键
+     * @return 减一之后的值
+     */
+    Long decrement(String key);
 }
