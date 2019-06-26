@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 52123
@@ -17,6 +18,9 @@ import java.lang.annotation.Target;
  * 用法二  @ObjectKeyCache(fields ={"name","age"})  -->  Hugh:12
  * 用法三  @ObjectKeyCache(key = "redisKey"，readObject = false)   -->  redisKey
  * 用法四  @ObjectKeyCache   自动获取方法第一个对象的非空属性作为redisKey  -->  Hugh:12
+ * 2019.6.26 新增过期功能
+ * 1. @ObjectKeyCache(fields ={"name","age"}, expire = 10) 过期时间为10秒
+ * 2. @ObjectKeyCache(fields ={"name","age"}, expire = 10，TimeUnit.HOURS) 10天过期
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -27,4 +31,8 @@ public @interface ObjectKeyCache {
     String key() default "";
 
     String[] fields() default {};
+
+    long expire() default 0L;
+
+    TimeUnit timeUnit() default TimeUnit.SECONDS;
 }

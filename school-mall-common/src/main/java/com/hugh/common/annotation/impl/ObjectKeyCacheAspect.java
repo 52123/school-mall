@@ -67,7 +67,16 @@ public class ObjectKeyCacheAspect {
                     return obj;
                 } else {
                     Object resp = joinPoint.proceed();
-                    redisService.setValue(redisKey, resp);
+                    /*
+                     * 新增过期功能
+                     * 当expire大于0时，设置过期时间
+                     */
+                    if (objectKeyCache.expire() > 0) {
+                        redisService.setValue(redisKey, resp, objectKeyCache.expire(),
+                                objectKeyCache.timeUnit());
+                    } else {
+                        redisService.setValue(redisKey, resp);
+                    }
                     return resp;
                 }
             }
