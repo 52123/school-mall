@@ -1,4 +1,5 @@
-## Redis分布式锁
+# 分布式锁
+## 1.Redis分布式锁
 ### 1. SETNX KEY VALUE
 SETNX是SET if Not eXists的简写，当该Key不存在时才能保存Value，所以可以利用该命令实现同一个方法在多台服务器上同一时刻只有一条线程可以执行。<br>
 即当一个线程成功写入某键值对后，就获得了锁。执行完后可以删除该键或设置过期时间来释放锁<br>
@@ -67,9 +68,25 @@ https://redis.io/commands/set <br>
     }
 ```
 
+## 2. ZooKeeper分布式锁
+### ZooKeeper的数据模型 
+https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#sc_zkDataModel_znodes<br>
+ZooKeeper将所有数据存储在内存中，数据模型是一个树(Znode Tree)。这棵树是由很多个节点(Znode)组成的，每个节点的引用规则就是路径引用。/service/redis表示一个Znode，它包含子节点引用、存储数据、访问权限以及节点元数据等四部分
+
+### Znode的类型
+- 持久节点（PERSISTENT）：节点创建后，就一直存在，直到有删除操作来主动清除这个节点
+- 持久顺序节点（PERSISTENT_SEQUENTIAL）：保留持久节点的特性，额外的特性是，每个节点会为其第一层子节点维护一个顺序，记录每个子节点创建的先后顺序，ZK会自动为给定节点名加上一个数字后缀（自增的），作为新的节点名。
+- 临时节点（EPHEMERAL）：和持久节点不同的是，临时节点的生命周期和客户端会话绑定，当然也可以主动删除。`(RPC服务注册我用的是这个，因为我想在服务节点后创建属于该服务的地址节点)`
+- 临时顺序节点（EPHEMERAL_SEQUENTIAL）：保留临时节点的特性，外加顺序特性，参考持久顺序节点(分布式锁用这个)
+
+### 使用临时顺序节点实现分布式锁
+当有线程来请求锁时，就在锁的节点下创建一个临时顺序节点，默认获取到最小子节点的线程持有锁，释放锁时删除该节点。那么下一节点便成了最小节点，创建该节点的线程持有锁。<br><br>
+为什么要用临时顺序节点？<br>
+假如获得线程的服务器宕机了，那么ZooKeeper与该服务器的会话便中断，ZooKeeper会自动删除该线程创建的节点，且最小子节点对应的线程获取锁
 
 
-## RPC
+
+# RPC
  ### 1. RPC工作流程
     
 <img src="./docs/rpc_flow_chart.jpg" />
