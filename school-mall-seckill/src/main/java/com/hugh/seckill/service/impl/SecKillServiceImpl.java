@@ -1,6 +1,7 @@
 package com.hugh.seckill.service.impl;
 
-import com.hugh.common.distributedlock.redis.RedisLockUtil;
+import com.hugh.common.distributedlock.DistributionLock;
+import com.hugh.common.distributedlock.zookeeper.ZkLock;
 import com.hugh.common.model.BaseResp;
 import com.hugh.common.rpc.RedisService;
 import com.hugh.seckill.dto.SecKillReq;
@@ -33,12 +34,20 @@ public class SecKillServiceImpl implements SecKillService {
 
     private RedisService redisService;
 
-    private RedisLockUtil redisLock;
+    private DistributionLock redisLock;
 
     @Autowired
     public SecKillServiceImpl(RedisService redisService) {
         this.redisService = redisService;
-        this.redisLock = new RedisLockUtil("redisLock", redisService);
+        /*
+         * redis分布式锁
+         */
+//        this.redisLock = new RedisLockUtil("redisLock", redisService);
+        /*
+         * zk分布式锁
+         */
+        this.redisLock = new ZkLock("127.0.0.1:2181","/lock");
+
     }
 
     /**
@@ -50,6 +59,7 @@ public class SecKillServiceImpl implements SecKillService {
     public BaseResp startRedisSecondKill(SecKillReq req) {
         // 短时间(30秒)内同一用户对同一商品发起多次请求
         if (redisLock.lock()) {
+            System.out.println(Thread.currentThread().getName() + " 获取锁");
             String redisKey = req.userId + ":" + req.secondKillId;
             Long orderId = orderService.checkRepeat(redisKey);
             if (orderId != null) {
@@ -64,9 +74,11 @@ public class SecKillServiceImpl implements SecKillService {
                 mallOrder.setCreateTime(new Date(System.currentTimeMillis()));
                 orderMapper.insert(mallOrder);
                 reduceCount(req.secondKillId);
+                System.out.println(Thread.currentThread().getName() + " 释放锁");
                 redisLock.releaseLock();
                 return BaseResp.success("抢购成功");
             } else {
+                System.out.println(Thread.currentThread().getName() + " 释放锁");
                 redisLock.releaseLock();
                 return BaseResp.success("秒杀已结束");
             }

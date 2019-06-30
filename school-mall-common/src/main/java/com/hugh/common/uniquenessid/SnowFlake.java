@@ -31,7 +31,7 @@ public class SnowFlake {
     /**
      * 初始时间戳
      */
-    private long initTimeStamp = LocalDateTime.parse("2019-06-16 23:53")
+    private long initTimeStamp = LocalDateTime.parse("2019-06-16T23:53")
                                     .atZone(ZoneId.systemDefault()).toEpochSecond();
 
     /**
