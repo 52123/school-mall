@@ -3,7 +3,11 @@ package com.hugh.common.threadpool;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * @author 52123
@@ -11,11 +15,11 @@ import java.util.concurrent.*;
  */
 public class ThreadPoolFactory {
 
-    private static int cpuNum = Runtime.getRuntime().availableProcessors();
-    private static int coreSize = cpuNum + 1;
-    private static int maxPoolSize = cpuNum + 1;
-    private static long keepAlive = 2000;
-    private static BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>(1000);
+    private static int threadNum = Runtime.getRuntime().availableProcessors() * 2;
+    private static int coreSize = threadNum + 1;
+    private static int maxPoolSize = threadNum + 1;
+    private static long keepAlive = 2000L;
+    private static BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(100000);
 
     private ThreadPoolFactory(){}
 
