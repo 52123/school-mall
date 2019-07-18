@@ -34,14 +34,15 @@ public class RpcClient {
     public RpcClient init(String serviceAddress, int servicePort) throws Exception {
         this.group = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.group(group).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
-            @Override
-            protected void initChannel(SocketChannel ch) {
-                ch.pipeline().addLast(new RpcEncoder<>(RpcRequest.class))
-                        .addLast(new RpcDecoder<>(RpcResponse.class))
-                        .addLast(new RpcClientHandler());
-            }
-        }).option(ChannelOption.TCP_NODELAY, true)
+        bootstrap.group(group).channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) {
+                        ch.pipeline().addLast(new RpcEncoder<>(RpcRequest.class))
+                                .addLast(new RpcDecoder<>(RpcResponse.class))
+                                .addLast(new RpcClientHandler());
+                    }})
+                .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000);
         this.channel = bootstrap.connect(serviceAddress, servicePort).sync().channel();

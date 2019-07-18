@@ -3,6 +3,7 @@ package com.hugh.rpc.server;
 import com.hugh.rpc.utils.ThreadPoolFactory;
 import com.hugh.rpc.protocol.RpcRequest;
 import com.hugh.rpc.protocol.RpcResponse;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -68,11 +69,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
-        log.error("服务连接发生异常", cause);
-        if (ctx.channel().isActive()) {
-            ctx.close();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        Channel channel = ctx.channel();
+        if (channel.isActive()) {
+            channel.close();
         }
+        log.error("服务连接发生异常", cause);
     }
 }

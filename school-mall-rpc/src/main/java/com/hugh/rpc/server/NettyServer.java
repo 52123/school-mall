@@ -1,12 +1,14 @@
 package com.hugh.rpc.server;
 
-import com.hugh.rpc.utils.ThreadPoolFactory;
 import com.hugh.rpc.protocol.RpcDecoder;
 import com.hugh.rpc.protocol.RpcEncoder;
 import com.hugh.rpc.protocol.RpcRequest;
 import com.hugh.rpc.protocol.RpcResponse;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -16,7 +18,6 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
 
 
 /**
@@ -25,11 +26,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 由bean的形式注入到业务中
  */
 @Slf4j
-public class NettyServer{
+public class NettyServer {
 
     private EventLoopGroup bossGroup = new NioEventLoopGroup();
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
-    private ThreadPoolExecutor threadPool = ThreadPoolFactory.getInstance("NettyServer-pool-%d");
 
     private String serviceAddress;
 
@@ -60,7 +60,6 @@ public class NettyServer{
     }
 
     public void startUpService() {
-        threadPool.execute(() -> {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup).
                     channel(NioServerSocketChannel.class)
@@ -85,6 +84,5 @@ public class NettyServer{
                 bossGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             }
-        });
     }
 }

@@ -39,9 +39,7 @@ public class RpcProxy {
     public <T> T create(Class<?> clazz) {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(),
                 new Class<?>[]{clazz}, (proxy, method, args) -> {
-                    /*
-                     * 封装被代理类的属性
-                     */
+
                     RpcRequest request = new RpcRequest();
                     request.setRequestId(ATOMIC_INT.getAndIncrement());
                     request.setClassName(method.getDeclaringClass().getName());
@@ -54,6 +52,10 @@ public class RpcProxy {
                         /*
                          * 获取服务的地址(随机)
                          * 当地址不同的时候才重新初始化Netty客户端
+                         */
+                        /*
+                         * todo 客户端对于同一个服务有多个地址，会导致频繁创建和销毁
+                         * 解决一：实例出多个地址的RPC客户端。轮询实现负载均衡
                          */
 
                         String serviceAddress = discover.getServiceAddress();

@@ -3,10 +3,8 @@ package com.hugh.rpc.client;
 import com.hugh.rpc.protocol.RpcResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * @author 52123
@@ -18,14 +16,14 @@ public class RpcFuture implements Future<RpcResponse> {
 
     private RpcResponse response;
     private long startTime;
-    private volatile boolean done = false;
+    private boolean done = false;
     private final Object lock = new Object();
 
-    public RpcFuture() {
+    RpcFuture() {
         this.startTime = System.currentTimeMillis();
     }
 
-    public void setResponse(RpcResponse response) {
+    void setResponse(RpcResponse response) {
         this.response = response;
         synchronized (lock) {
             done = true;
@@ -39,7 +37,7 @@ public class RpcFuture implements Future<RpcResponse> {
     }
 
     @Override
-    public RpcResponse get() throws InterruptedException, ExecutionException {
+    public RpcResponse get() throws InterruptedException {
         /*
          * 万一传输途中服务器挂了，就完了，一直阻塞
          */
@@ -67,7 +65,7 @@ public class RpcFuture implements Future<RpcResponse> {
     }
 
     @Override
-    public RpcResponse get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public RpcResponse get(long timeout, TimeUnit unit) {
         return null;
     }
 

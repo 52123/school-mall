@@ -1,6 +1,7 @@
 package com.hugh.rpc.client;
 
 import com.hugh.rpc.protocol.RpcResponse;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,11 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<RpcResponse> {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
-        log.error("RPC client error", cause);
-        if (ctx.channel().isActive()) {
-            ctx.close();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        Channel channel = ctx.channel();
+        if (channel.isActive()) {
+            channel.close();
         }
+        log.error("服务连接发生异常", cause);
     }
 }
