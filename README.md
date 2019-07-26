@@ -3,13 +3,13 @@
     * [Redis分布式锁](##1.Redis分布式锁)
     * [ZooKeeper分布式锁](##2.ZooKeeper分布式锁)
 * [三、RPC](#RPC)
-    * [工作流程](###1.RPC工作流程)
-    * [序列化](###2.序列化与反序列化)
-    * [编码解码](###3.编码与解码)
-    * [配置](###4.客户端xml配置)
-    * [性能压测](##性能压测)
+    * [工作流程](#1.RPC工作流程)
+    * [序列化](#2.序列化与反序列化)
+    * [编码解码](#3.编码与解码)
+    * [配置](#4.客户端xml配置)
+    * [性能压测](#1-性能压测)
 * [四、Lucene](#Lucene)
-    * [核心思想](###核心思想(原理))
+    * [核心思想](#核心思想(原理))
 
 
 # 前言
@@ -165,8 +165,8 @@ RPC通信大致可划分为四个步骤<br>
 ## 性能压测
 
 ### 1. 性能压测
-    配置：4核 8G <br>
-    JVM参数：-XX:+UseG1GC -Xmx512m -Xms512m <br><br>
+    配置：4核 8G 
+    JVM参数：-XX:+UseG1GC -Xmx512m -Xms512m 
 单机10w次请求耗时截图
 
 <img src="docs/rpc_performance.png">
@@ -177,13 +177,13 @@ RPC通信大致可划分为四个步骤<br>
     JVM参数：-XX:+UseG1GC -Xmx512m -Xms512m 
 <img src="docs/rpc_g1.png">
 
-`使用G1收集器，只发生了三次Young GC，GC总耗时为0.058秒`
+`使用G1收集器，只发生了5次Young GC，GC总耗时为0.058秒`
 
 --------------------------------------
     JVM参数：-Xmx512m -Xms512m 
 <img src="docs/rpc_jvm_default.png">
 
-`默认使用Parallel收集器，发生了三次Young GC和两次Full GC, 总耗时为0.227秒。`
+`默认使用Parallel收集器，发生了3次Young GC和2次Full GC, 总耗时为0.227秒。`
 
 
 
