@@ -173,6 +173,8 @@ RPC通信大致可划分为四个步骤<br>
 
 `10w次请求，大约耗时20s，平均qps在5000左右`
 
+<br><br>
+
 ### 2.GC情况
     JVM参数：-XX:+UseG1GC -Xmx512m -Xms512m 
 <img src="docs/rpc_g1.png">
@@ -185,8 +187,27 @@ RPC通信大致可划分为四个步骤<br>
 
 `默认使用Parallel收集器，发生了3次Young GC和2次Full GC, 总耗时为0.227秒。`
 
+<br><br>
 
+### 3. 优化
+--------------------------------------
+优化了两点：
+- 问题：之前考虑一个服务可能有多个地址(集群)，所以当线程拿到不同的服务地址，需要新建一个RpcClient，而RpcClient又错误地设置成了成员属性，导致多个线程可并发访问，所以加了锁。<br><br>
+解决方法：去除了锁，将RpcCLient用ConcurrentHashMap存储，当线程拿到服务地址，则去map中查找，有就直接连接，无就新建。<br><br>
+优化结果：QPS提高了一倍
 
+<img src="docs/optimize-1.png"/>
+<br><br>
+<br><br>
+
+- 小问题：发现每次查找服务时，都需要去访问ZooKeeper，导致大量不必要的网络通信<br><br>
+解决方法：用List存储ZooKeeper对应服务的所有地址，后面通过监听ZooKeeper节点的变化再去改变List和对应服务地址的CHM（防止内存泄漏）<br><br>
+优化结果：经过这两点的优化，QPS几乎提高了两倍
+<img src="docs/optimize-2.png"/>
+
+<br>
+
+` JVM参数都为 -XX:+UseG1GC -Xmx512m -Xms512m `
 
 
 
