@@ -1,7 +1,7 @@
 package com.hugh.seckill.web;
 
 import com.hugh.common.model.BaseResp;
-import com.hugh.rpc.utils.ThreadPoolFactory;
+import com.hugh.common.threadpool.ThreadPoolFactory;
 import com.hugh.seckill.dto.SecKillReq;
 import com.hugh.seckill.service.SecKillService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 

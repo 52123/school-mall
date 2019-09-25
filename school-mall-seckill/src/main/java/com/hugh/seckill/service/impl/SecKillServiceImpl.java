@@ -1,6 +1,7 @@
 package com.hugh.seckill.service.impl;
 
 import com.hugh.common.distributedlock.DistributionLock;
+import com.hugh.common.distributedlock.redis.RedisLockUtil;
 import com.hugh.common.distributedlock.zookeeper.ZkLock;
 import com.hugh.common.model.BaseResp;
 import com.hugh.common.rpc.RedisService;
@@ -34,7 +35,7 @@ public class SecKillServiceImpl implements SecKillService {
 
     private RedisService redisService;
 
-    private DistributionLock redisLock;
+    private DistributionLock distributionLock;
 
     @Autowired
     public SecKillServiceImpl(RedisService redisService) {
@@ -42,11 +43,11 @@ public class SecKillServiceImpl implements SecKillService {
         /*
          * redis分布式锁
          */
-//        this.redisLock = new RedisLockUtil("redisLock", redisService);
+        this.distributionLock = new RedisLockUtil("distributionLock", redisService);
         /*
          * zk分布式锁
          */
-        this.redisLock = new ZkLock("127.0.0.1:2181","/lock");
+//        this.distributionLock = new ZkLock("127.0.0.1:2181","/lock");
 
     }
 
@@ -58,15 +59,15 @@ public class SecKillServiceImpl implements SecKillService {
     @Override
     public BaseResp startRedisSecondKill(SecKillReq req) {
         // 短时间(30秒)内同一用户对同一商品发起多次请求
-        if (redisLock.lock()) {
+        String redisKey = req.userId + ":" + req.secondKillId;
+        Long orderId = orderService.checkRepeat(redisKey);
+        if (orderId != null) {
+            return BaseResp.fail("0002", "请勿重复下单");
+        }
+        if (distributionLock.lock()) {
             System.out.println(Thread.currentThread().getName() + " 获取锁");
-            String redisKey = req.userId + ":" + req.secondKillId;
-            Long orderId = orderService.checkRepeat(redisKey);
-            if (orderId != null) {
-                redisLock.releaseLock();
-                return BaseResp.fail("0002", "请勿重复下单");
-            }
-            if (checkSecKillCount(req.secondKillId) > 0) {
+            int stock = checkSecKillCount(req.secondKillId);
+            if (stock > 0) {
                 orderId = orderService.createOrderId(req);
                 MallOrder mallOrder = new MallOrder();
                 mallOrder.setId(orderId);
@@ -75,11 +76,11 @@ public class SecKillServiceImpl implements SecKillService {
                 orderMapper.insert(mallOrder);
                 reduceCount(req.secondKillId);
                 System.out.println(Thread.currentThread().getName() + " 释放锁");
-                redisLock.releaseLock();
+                distributionLock.releaseLock();
                 return BaseResp.success("抢购成功");
             } else {
                 System.out.println(Thread.currentThread().getName() + " 释放锁");
-                redisLock.releaseLock();
+                distributionLock.releaseLock();
                 return BaseResp.success("秒杀已结束");
             }
         } else {
