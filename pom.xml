@@ -29,7 +29,7 @@
         <freemark.version>2.3.23</freemark.version>
         <mybatis.srping.boot>2.0.0</mybatis.srping.boot>
         <druid.version>1.1.10</druid.version>
-        <fastjson.version>1.2.31</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <mybatis.pagehelper.version>1.2.5</mybatis.pagehelper.version>
     </properties>
 
