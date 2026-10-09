@@ -26,7 +26,7 @@
         <java.version>1.8</java.version>
         <commons-pool.version>2.6.2</commons-pool.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <freemark.version>2.3.23</freemark.version>
+        <freemark.version>2.3.35</freemark.version>
         <mybatis.srping.boot>2.0.0</mybatis.srping.boot>
         <druid.version>1.1.10</druid.version>
         <fastjson.version>1.2.31</fastjson.version>
